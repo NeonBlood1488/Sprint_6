@@ -12,7 +12,7 @@ class TestOrder:
         main_page = MainPage(driver)
         main_page.accept_cookies()
 
-        if order["button_location"] == "top":    # Выбор кнопки заказа в зависимости от наших данных
+        if order["button_location"] == "top":    # Выбор кнопки заказа в зависимости от данных
             main_page.click_order_button_top()
         else:
             main_page.click_order_button_bottom()

@@ -3,9 +3,9 @@ import pytest
 from pages.main_page import MainPage
 from data import FAQ_DATA
 
-@allure.feature('Вопросы о важном')
+@allure.feature('Часто задаваемые вопросы')
 class TestQuestions:
-    @allure.story('Проверка текста ответов')
+    @allure.story('Проверка текста вопросов и ответов')
     @pytest.mark.parametrize("index, expected_text", 
                              [(i, item[1]) for i, item in enumerate(FAQ_DATA)])
     def test_faq_answer_text(self, driver, index, expected_text):

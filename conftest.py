@@ -1,13 +1,10 @@
 import pytest
 from selenium import webdriver
-from selenium.webdriver.firefox.service import Service
-from webdriver_manager.firefox import GeckoDriverManager
 
 @pytest.fixture(scope="function")
 def driver():
-    service = Service(GeckoDriverManager().install())
-    driver = webdriver.Firefox(service=service)
-    driver.get("https://qa-scooter.praktikum-services.ru/")
-    driver.maximize_window()
-    yield driver
-    driver.quit()
+    browser = webdriver.Firefox()
+    browser.maximize_window()
+    browser.get("https://qa-scooter.praktikum-services.ru/")
+    yield browser
+    browser.quit()

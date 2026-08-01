@@ -1,6 +1,8 @@
 import allure
 from pages.main_page import MainPage
+from pages.order_page import OrderPage
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 @allure.feature('Лого')
 class TestLogo:
@@ -8,12 +10,11 @@ class TestLogo:
     def test_scooter_logo_redirects_to_main(self, driver):
         main_page = MainPage(driver)
         main_page.accept_cookies()
-        main_page.click_order_button_top()    # Сначала переходим на страницу заказа, чтобы потом вернуться
-        from pages.order_page import OrderPage
+        main_page.click_order_button_top()
         order_page = OrderPage(driver)
-        order_page.wait.until(EC.visibility_of_element_located(order_page.NAME_FIELD))  # Ждём загрузку страницы заказа
-        main_page.click_scooter_logo()    # Кликаем на лого сайта, чтобы попасть на главную
-        assert driver.current_url == "https://qa-scooter.praktikum-services.ru/", "Не перешли на главную"    # Проверка того, что мы на главной
+        order_page.wait.until(EC.visibility_of_element_located(order_page.NAME_FIELD))
+        main_page.click_scooter_logo()
+        assert driver.current_url == "https://qa-scooter.praktikum-services.ru/", "Не перешли на главную"
 
     @allure.story('Переход на Дзен через лого Яндекса')
     def test_yandex_logo_redirects_to_dzen(self, driver):
@@ -21,7 +22,10 @@ class TestLogo:
         main_page.accept_cookies()
         original_window = driver.current_window_handle
         main_page.click_yandex_logo()
+        wait = WebDriverWait(driver, 10)
+        wait.until(lambda d: len(d.window_handles) > 1)    # Ожидаем появления нового окна
         driver.switch_to.window(driver.window_handles[1])
-        assert "dzen.ru" in driver.current_url or "yandex" in driver.current_url, "Редирект на Дзен не выполнен"    # Проверка того, что URL содержит dzen.ru (или Яндекс)
+        wait.until(lambda d: d.current_url != "about:blank")    # Ждем, пока страница загрузится
+        assert "dzen.ru" in driver.current_url or "yandex" in driver.current_url, "Редирект на Дзен не выполнен"
         driver.close()
         driver.switch_to.window(original_window)
