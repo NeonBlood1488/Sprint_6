@@ -7,7 +7,8 @@ from data import FAQ_DATA
 class TestQuestions:
     @allure.story('Проверка текста вопросов и ответов')
     @pytest.mark.parametrize("index, expected_text", 
-                             [(i, item[1]) for i, item in enumerate(FAQ_DATA)])
+                             [(i, item[1]) for i, item in enumerate(FAQ_DATA)],
+                             ids=[f"faq_{i}" for i in range(len(FAQ_DATA))])
     def test_faq_answer_text(self, driver, index, expected_text):
         main_page = MainPage(driver)
         main_page.accept_cookies()

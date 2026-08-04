@@ -20,12 +20,9 @@ class TestLogo:
     def test_yandex_logo_redirects_to_dzen(self, driver):
         main_page = MainPage(driver)
         main_page.accept_cookies()
-        original_window = driver.current_window_handle
         main_page.click_yandex_logo()
         wait = WebDriverWait(driver, 10)
-        wait.until(lambda d: len(d.window_handles) > 1)    # Ожидаем появления нового окна
+        wait.until(lambda d: len(d.window_handles) > 1)
         driver.switch_to.window(driver.window_handles[1])
-        wait.until(lambda d: d.current_url != "about:blank")    # Ждем, пока страница загрузится
+        wait.until(lambda d: d.current_url != "about:blank")
         assert "dzen.ru" in driver.current_url or "yandex" in driver.current_url, "Редирект на Дзен не выполнен"
-        driver.close()
-        driver.switch_to.window(original_window)
