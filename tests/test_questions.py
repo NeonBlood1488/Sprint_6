@@ -5,13 +5,13 @@ from data import FAQ_DATA
 
 @allure.feature('Часто задаваемые вопросы')
 class TestQuestions:
-    @allure.story('Проверка текста вопросов и ответов')
-    @pytest.mark.parametrize("index, expected_text", 
+    @allure.story('Проверка текста ответов на вопросы')
+    @pytest.mark.parametrize("index, expected_text",
                              [(i, item[1]) for i, item in enumerate(FAQ_DATA)],
-                             ids=[f"faq_{i}" for i in range(len(FAQ_DATA))])
+                             ids=[f"faq_{i}" for i in range(len(FAQ_DATA))])   # Короткие ID для удобных логов, а то очень длинные строки были
     def test_faq_answer_text(self, driver, index, expected_text):
         main_page = MainPage(driver)
         main_page.accept_cookies()
-        main_page.click_question(index)
+        main_page.click_question(index)        # Клик по вопросу, чтобы раскрыть ответ
         actual_text = main_page.get_answer_text(index)
         assert actual_text == expected_text, f"Ожидался текст: {expected_text}, получен: {actual_text}"

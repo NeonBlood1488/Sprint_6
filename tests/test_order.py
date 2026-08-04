@@ -5,7 +5,7 @@ from data import ORDER_DATA
 
 @allure.feature('Заказ самоката')
 class TestOrder:
-    # Вспомогательный метод для заполнения формы (убираем дублирование)
+    # Вспомогательный метод для заполнения формы
     def _fill_order_form(self, driver, order_data):
         order_page = OrderPage(driver)
         order_page.fill_first_form(
@@ -13,14 +13,12 @@ class TestOrder:
             surname=order_data["surname"],
             address=order_data["address"],
             metro=order_data["metro"],
-            phone=order_data["phone"]
-        )
+            phone=order_data["phone"])
         order_page.fill_second_form(
             date=order_data["date"],
             rental_period=order_data["rental_period"],
             color=order_data["color"],
-            comment=order_data["comment"]
-        )
+            comment=order_data["comment"])
         return order_page.get_success_message()
 
     @allure.story('Позитивный сценарий оформления заказа через верхнюю кнопку')

@@ -8,3 +8,4 @@ def driver():
     browser.get("https://qa-scooter.praktikum-services.ru/")
     yield browser
     browser.quit()
+ # Предполагается, что geckodriver добавлен в системный PATH
