@@ -12,7 +12,7 @@ class TestLogo:
         main_page.accept_cookies()
         main_page.click_order_button_top()   # Переход на страничку заказа
         order_page = OrderPage(driver)
-        order_page.wait.until(EC.visibility_of_element_located(order_page.NAME_FIELD))  # Ждем-с загрузку страницы заказа
+        order_page.wait_for_visibility(order_page.NAME_FIELD)  # Ждем-с загрузку страницы заказа
         main_page.click_scooter_logo()    # Клик по лого
         assert driver.current_url == "https://qa-scooter.praktikum-services.ru/", "Не перешли на главную"
 

@@ -1,9 +1,9 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
+from pages.base_page import BasePage
 
-class OrderPage:
+class OrderPage(BasePage):
+    # Локаторы
     NAME_FIELD = (By.XPATH, "//input[@placeholder='* Имя']")
     SURNAME_FIELD = (By.XPATH, "//input[@placeholder='* Фамилия']")
     ADDRESS_FIELD = (By.XPATH, "//input[@placeholder='* Адрес: куда привезти заказ']")
@@ -23,45 +23,45 @@ class OrderPage:
     SUCCESS_MESSAGE = (By.XPATH, "//*[contains(., 'Заказ оформлен')]")
 
     def __init__(self, driver):
-        self.driver = driver
-        self.wait = WebDriverWait(driver, 10)
+        super().__init__(driver)
 
     def fill_first_form(self, name, surname, address, metro, phone):
-        self.wait.until(EC.element_to_be_clickable(self.NAME_FIELD)).send_keys(name)
-        self.driver.find_element(*self.SURNAME_FIELD).send_keys(surname)
-        self.driver.find_element(*self.ADDRESS_FIELD).send_keys(address)
-        metro_input = self.driver.find_element(*self.METRO_FIELD)
+        self.click(self.NAME_FIELD)
+        self.find(self.NAME_FIELD).send_keys(name)
+        self.find(self.SURNAME_FIELD).send_keys(surname)
+        self.find(self.ADDRESS_FIELD).send_keys(address)
+
+        metro_input = self.find(self.METRO_FIELD)
         metro_input.send_keys(metro)
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, f"//div[text()='{metro}']"))).click()
-        self.driver.find_element(*self.PHONE_FIELD).send_keys(phone)
-        self.driver.find_element(*self.NEXT_BUTTON).click()
+        station_locator = (By.XPATH, f"//div[text()='{metro}']")
+        self.click(station_locator)  # Клик по выпадающему списку варианты станции
+
+        self.find(self.PHONE_FIELD).send_keys(phone)
+        self.click(self.NEXT_BUTTON)
 
     def fill_second_form(self, date, rental_period, color, comment):
-        date_input = self.driver.find_element(*self.DATE_FIELD)
+        date_input = self.find(self.DATE_FIELD)
         date_input.send_keys(date)
         date_input.send_keys(Keys.ENTER)
 
-        self.driver.find_element(*self.RENTAL_PERIOD_DROPDOWN).click()
-        self.wait.until(EC.element_to_be_clickable(
-            (self.RENTAL_OPTION[0], self.RENTAL_OPTION[1].format(rental_period))
-        )).click()
+        self.click(self.RENTAL_PERIOD_DROPDOWN)          # Выбор срока аренды
+        option_locator = (By.XPATH, f"//div[@class='Dropdown-option' and text()='{rental_period}']")
+        self.click(option_locator)
 
+        # Выбор цвета через JS (на всякий)
         color_id = "black" if color == "чёрный жемчуг" else "grey"
-        color_checkbox = self.driver.find_element(
-            self.COLOR_CHECKBOX[0], self.COLOR_CHECKBOX[1].format(color_id)
-        )
-        self.driver.execute_script("arguments[0].click();", color_checkbox)
+        color_locator = (By.XPATH, f"//label[@for='{color_id}']")
+        self.scroll_and_click(color_locator)
 
-        self.driver.find_element(*self.COMMENT_FIELD).send_keys(comment)
+        self.find(self.COMMENT_FIELD).send_keys(comment)          # Комм
 
-        # Находим кнопку, прокручиваем и кликаем через JS
-        order_button = self.driver.find_element(*self.ORDER_BUTTON)
-        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", order_button)
-        self.driver.execute_script("arguments[0].click();", order_button)
+        self.scroll_and_click(self.ORDER_BUTTON)                  # Нажимаем на кнопку "Заказать" с прокруткой
 
-        self.wait.until(EC.visibility_of_element_located(self.CONFIRM_MODAL))    # Ждем всплывающее окно с подтверждением заказа
-        self.wait.until(EC.element_to_be_clickable(self.CONFIRM_YES)).click()    # Клик на кнопку "Да"
-        self.wait.until(EC.visibility_of_element_located(self.SUCCESS_MESSAGE))  # Ждем сообщение об успехе
+        # Подтверждение заказа
+        self.wait_for_visibility(self.CONFIRM_MODAL)
+        self.click(self.CONFIRM_YES)
+        self.wait_for_visibility(self.SUCCESS_MESSAGE)
 
     def get_success_message(self):
-        return self.wait.until(EC.visibility_of_element_located(self.SUCCESS_MESSAGE)).text
+        return self.get_text(self.SUCCESS_MESSAGE)
+#67
