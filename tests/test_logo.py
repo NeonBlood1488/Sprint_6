@@ -1,28 +1,34 @@
 import allure
 from pages.main_page import MainPage
 from pages.order_page import OrderPage
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from locators import OrderPageLocators
+from config import BASE_URL, DZEN_PATTERNS
 
 @allure.feature('Лого')
 class TestLogo:
+    @allure.title("Переход на главную через лого Самоката")
     @allure.story('Переход на главную через лого Самоката')
-    def test_scooter_logo_redirects_to_main(self, driver):  # Проверка того, что клик по лого Самоката возвращает нас на главную страницу
+    def test_scooter_logo_redirects_to_main(self, driver):
         main_page = MainPage(driver)
         main_page.accept_cookies()
-        main_page.click_order_button_top()   # Переход на страничку заказа
+        main_page.click_order_button_top()
         order_page = OrderPage(driver)
-        order_page.wait_for_visibility(order_page.NAME_FIELD)  # Ждем-с загрузку страницы заказа
-        main_page.click_scooter_logo()    # Клик по лого
-        assert driver.current_url == "https://qa-scooter.praktikum-services.ru/", "Не перешли на главную"
+        # Ожидаем появления поля имени на странице заказа
+        order_page.wait_for_visibility(OrderPageLocators.NAME_FIELD)
+        main_page.click_scooter_logo()
+        assert main_page.get_current_url() == BASE_URL, "Не перешли на главную"
 
+    @allure.title("Переход на Дзен через лого Яндекса")
     @allure.story('Переход на Дзен через лого Яндекса')
-    def test_yandex_logo_redirects_to_dzen(self, driver):   # Проверка того, что клик по лого Яндекса открывает страницу Дзена в новой вкладке
+    def test_yandex_logo_redirects_to_dzen(self, driver):
         main_page = MainPage(driver)
         main_page.accept_cookies()
-        main_page.click_yandex_logo()    # клик по лого
-        wait = WebDriverWait(driver, 10)
-        wait.until(lambda d: len(d.window_handles) > 1)    # ждем-с появления новой вкладки
-        driver.switch_to.window(driver.window_handles[1])  # переключаемся на новую вкладку
-        wait.until(lambda d: d.current_url != "about:blank")  # опять ждем загрузку страницы
-        assert "dzen.ru" in driver.current_url or "yandex" in driver.current_url, "Редирект на Дзен не выполнен"   # Проверяем, что URL содержит dzen.ru или yandex
+        main_page.click_yandex_logo()
+
+        # Ожидаем появления второго окна и переключаемся на него
+        main_page.wait_for_window_count(2)
+        main_page.switch_to_new_window()
+        # Ожидаем, что URL перестанет быть "about:blank"
+        main_page.wait_for_url_not_blank()
+
+        assert any(pattern in main_page.get_current_url() for pattern in DZEN_PATTERNS), "Редирект на Дзен не выполнен"

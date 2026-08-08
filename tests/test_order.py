@@ -5,7 +5,6 @@ from data import ORDER_DATA
 
 @allure.feature('Заказ самоката')
 class TestOrder:
-    # Вспомогательный метод для заполнения формы
     def _fill_order_form(self, driver, order_data):
         order_page = OrderPage(driver)
         order_page.fill_first_form(
@@ -21,6 +20,7 @@ class TestOrder:
             comment=order_data["comment"])
         return order_page.get_success_message()
 
+    @allure.title("Оформление заказа через верхнюю кнопку")
     @allure.story('Позитивный сценарий оформления заказа через верхнюю кнопку')
     def test_successful_order_top_button(self, driver):
         main_page = MainPage(driver)
@@ -29,6 +29,7 @@ class TestOrder:
         success_text = self._fill_order_form(driver, ORDER_DATA[0])
         assert "Заказ оформлен" in success_text, "Сообщение об успешном заказе не появилось"
 
+    @allure.title("Оформление заказа через нижнюю кнопку")
     @allure.story('Позитивный сценарий оформления заказа через нижнюю кнопку')
     def test_successful_order_bottom_button(self, driver):
         main_page = MainPage(driver)
