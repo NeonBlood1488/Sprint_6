@@ -5,7 +5,7 @@ from data import ORDER_DATA
 
 @allure.feature('Заказ самоката')
 class TestOrder:
-    def _fill_order_form(self, driver, order_data):
+    def _fill_order_form(self, driver, order_data):    # Этот метод заполняет форму и возвращает текст успеха
         order_page = OrderPage(driver)
         order_page.fill_first_form(
             name=order_data["name"],
@@ -25,7 +25,7 @@ class TestOrder:
     def test_successful_order_top_button(self, driver):
         main_page = MainPage(driver)
         main_page.accept_cookies()
-        main_page.click_order_button_top()
+        main_page.click_order_button_top()  # Заказ через верхнюю кнопку
         success_text = self._fill_order_form(driver, ORDER_DATA[0])
         assert "Заказ оформлен" in success_text, "Сообщение об успешном заказе не появилось"
 
@@ -34,6 +34,6 @@ class TestOrder:
     def test_successful_order_bottom_button(self, driver):
         main_page = MainPage(driver)
         main_page.accept_cookies()
-        main_page.click_order_button_bottom()
+        main_page.click_order_button_bottom()  # Заказ через нижнюю кнопку
         success_text = self._fill_order_form(driver, ORDER_DATA[1])
         assert "Заказ оформлен" in success_text, "Сообщение об успешном заказе не появилось"

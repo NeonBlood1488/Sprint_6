@@ -19,6 +19,7 @@ class BasePage:
     def click(self, locator, timeout=10):
         self.wait_for_clickable(locator, timeout).click()
 
+    # Прокручиваем и кликаем через JS для надежности
     @allure.step("Прокрутка к элементу и клик")
     def scroll_and_click(self, locator, timeout=10):
         element = self.wait_for_visibility(locator, timeout)

@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 
+# Локаторы главной страницы
 class MainPageLocators:
     COOKIE_BUTTON = (By.ID, "rcc-confirm-button")
     QUESTION_LOCATOR = (By.XPATH, "//div[@id='accordion__heading-{}']")
@@ -9,6 +10,7 @@ class MainPageLocators:
     SCOOTER_LOGO = (By.XPATH, "//img[@alt='Scooter']")
     YANDEX_LOGO = (By.XPATH, "//img[@alt='Yandex']")
 
+# Локаторы страницы заказа
 class OrderPageLocators:
     NAME_FIELD = (By.XPATH, "//input[@placeholder='* Имя']")
     SURNAME_FIELD = (By.XPATH, "//input[@placeholder='* Фамилия']")
